@@ -1,1 +1,1 @@
-rvm --create use jruby@shoes
+rvm --create use jruby-head@shoes
