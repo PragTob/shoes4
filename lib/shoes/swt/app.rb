@@ -25,11 +25,12 @@ module Shoes
       end
 
       def open
-        @real.layout
         @shell.pack
         @shell.open
+        @real.layout
         compute_width_error
         attach_event_listeners
+
 
         ::Swt.event_loop { ::Shoes::Swt.main_app.disposed? } if main_app?
       end
