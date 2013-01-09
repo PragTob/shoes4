@@ -19,9 +19,11 @@ module Shoes
         initialize_real()
         ::Shoes::Swt.register self
 
-        vb = @shell.getVerticalBar
-        vb.setIncrement 10
-        vb.addSelectionListener SelectionListener.new(self, vb)
+
+
+        @scroll_bar = @shell.getVerticalBar
+        @scroll_bar.setIncrement 10
+        @scroll_bar.addSelectionListener SelectionListener.new(self, @scroll_bar)
       end
 
       def open
@@ -31,12 +33,19 @@ module Shoes
         compute_width_error
         attach_event_listeners
 
-
         ::Swt.event_loop { ::Shoes::Swt.main_app.disposed? } if main_app?
       end
 
       def compute_width_error
-        @width_error = @dsl.top_slot.width - @shell.client_area.width
+        @width_error = @dsl.top_slot.width - @shell.client_area.width - scroll_bar_width
+      end
+
+      def scroll_bar_width
+        @scroll_bar.size.x
+      end
+
+      def scroll_bar_visible?
+        @scroll_bar.getVisible
       end
 
       def quit
@@ -122,7 +131,9 @@ module Shoes
 
       def controlResized(event)
         shell = event.widget
-        width = shell.getClientArea().width + @app.width_error
+        width_error = @app.width_error
+        width_error += @app.scroll_bar_width if @app.scroll_bar_visible?
+        width = shell.getClientArea().width + width_error
         height = shell.getClientArea().height
         @app.dsl.top_slot.width   = width
         @app.dsl.top_slot.height  = height
