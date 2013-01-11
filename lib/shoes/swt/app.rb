@@ -19,33 +19,26 @@ module Shoes
         initialize_real()
         ::Shoes::Swt.register self
 
+        attach_event_listeners
 
-
-        @scroll_bar = @shell.getVerticalBar
-        @scroll_bar.setIncrement 10
-        @scroll_bar.addSelectionListener SelectionListener.new(self, @scroll_bar)
+        #@scroll_bar = @shell.getVerticalBar
+        #@scroll_bar.setIncrement 10
+        #@scroll_bar.addSelectionListener SelectionListener.new(self, @scroll_bar)
       end
 
       def open
         @shell.pack
         @shell.open
-        @real.layout
-        compute_width_error
-        attach_event_listeners
 
         ::Swt.event_loop { ::Shoes::Swt.main_app.disposed? } if main_app?
       end
 
-      def compute_width_error
-        @width_error = @dsl.top_slot.width - @shell.client_area.width - scroll_bar_width
-      end
-
       def scroll_bar_width
-        @scroll_bar.size.x
+        0#@scroll_bar.size.x
       end
 
       def scroll_bar_visible?
-        @scroll_bar.getVisible
+        false#@scroll_bar.getVisible
       end
 
       def quit
@@ -127,11 +120,17 @@ module Shoes
     class ShellControlListener
       def initialize(app)
         @app = app
+        @first_run = true
+        @width_error = 0
       end
 
       def controlResized(event)
         shell = event.widget
-        width_error = @app.width_error
+        if @first_run
+          compute_width_error shell
+          @first_run = false
+        end
+        width_error = @width_error
         width_error += @app.scroll_bar_width if @app.scroll_bar_visible?
         width = shell.getClientArea().width + width_error
         height = shell.getClientArea().height
@@ -139,6 +138,10 @@ module Shoes
         @app.dsl.top_slot.height  = height
         @app.real.setSize width, height
         @app.real.layout
+      end
+
+      def compute_width_error(shell)
+        @width_error = @app.dsl.top_slot.width - shell.client_area.width - @app.scroll_bar_width
       end
 
       def controlMoved(e)
