@@ -10,11 +10,13 @@ module Shoes
       include Common::Container
 
       attr_reader :dsl, :real, :shell
+      attr_writer :width_error
 
       def initialize dsl
         @dsl = dsl
         ::Swt::Widgets::Display.app_name = @dsl.app_title
         @background = Color.new(@dsl.opts[:background])
+        @width_error = 0
         initialize_shell()
         initialize_real()
         ::Shoes::Swt.register self
@@ -41,8 +43,18 @@ module Shoes
         self
       end
 
+      def scroll_bar_width
+        scroll_bar = @shell.vertical_bar
+        if scroll_bar.isVisible
+          scroll_bar.size.x
+        else
+          0
+        end
+      end
+
       def width
-        @shell.getVerticalBar.getVisible ? (@shell.client_area.width + @shell.getVerticalBar.getSize.x) : @shell.client_area.width
+        width = @shell.getVerticalBar.getVisible ? (@shell.client_area.width + @shell.getVerticalBar.getSize.x) : @shell.client_area.width
+        width - @width_error
       end
 
       def height
@@ -119,16 +131,30 @@ module Shoes
     class ShellControlListener
       def initialize(app)
         @app = app
+        @first_run = true
       end
 
       def controlResized(event)
         shell = event.widget
+        p @app.dsl.top_slot.width
+        p shell.client_area.width
+        if @first_run
+          compute_width_error shell
+          @first_run = false
+        end
         width = shell.getClientArea().width
         height = shell.getClientArea().height
         @app.dsl.top_slot.width   = width
         @app.dsl.top_slot.height  = height
         @app.real.setSize width, height
         @app.real.layout
+      end
+
+      def compute_width_error(shell)
+        puts @app.scroll_bar_width
+        @app.width_error =  @app.dsl.top_slot.width -
+                            shell.client_area.width -
+                            @app.scroll_bar_width
       end
 
       def controlMoved(e)
