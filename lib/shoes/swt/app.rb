@@ -16,14 +16,18 @@ module Shoes
         ::Swt::Widgets::Display.app_name = @dsl.app_title
         @background = Color.new(@dsl.opts[:background])
         initialize_shell()
+        initialize_scroll_bar()
         initialize_real()
         ::Shoes::Swt.register self
 
         attach_event_listeners
 
-        #@scroll_bar = @shell.getVerticalBar
-        #@scroll_bar.setIncrement 10
-        #@scroll_bar.addSelectionListener SelectionListener.new(self, @scroll_bar)
+      end
+
+      def initialize_scroll_bar
+        @scroll_bar = @shell.getVerticalBar
+        @scroll_bar.setIncrement 10
+        @scroll_bar.addSelectionListener SelectionListener.new(self, @scroll_bar)
       end
 
       def open
@@ -34,18 +38,17 @@ module Shoes
       end
 
       def scroll_bar_width
-        0#@scroll_bar.size.x
+        @scroll_bar.size.x
       end
 
       def scroll_bar_visible?
-        false#@scroll_bar.getVisible
+        @scroll_bar.getVisible
       end
 
       def quit
         @shell.dispose
       end
 
-      # @return [Shoes::Swt::App] Self
       def app
         self
       end
@@ -131,7 +134,7 @@ module Shoes
           @first_run = false
         end
         width_error = @width_error
-        width_error += @app.scroll_bar_width if @app.scroll_bar_visible?
+        #width_error += @app.scroll_bar_width if @app.scroll_bar_visible?
         width = shell.getClientArea().width + width_error
         height = shell.getClientArea().height
         @app.dsl.top_slot.width   = width
