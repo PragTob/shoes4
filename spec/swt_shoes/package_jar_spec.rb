@@ -39,8 +39,12 @@ describe Shoes::Swt::Package::Jar do
       jar.entries.should_not include("dir_to_ignore/file_to_ignore")
     end
    
-    its(:default_dir) { pending "The next test fails if this one runs"; should eq(output_dir) }
-    its(:filename) { should eq(jar_name) }
+    # here it is messed as the subject always stays whichever is executed first
+    # of those 3. I added a 3rd spec for illustration purposes. Before the rspec
+    # upgrade this worked (at least we think it's rspec but pretty sure)
+    its(:filename) { p subject.filename; p self.__its_subject; should eq(jar_name) }
+    its(:default_dir) { p subject.default_dir; p self.__its_subject; should eq(output_dir) }
+    its(:working_dir) {p subject.working_dir; p self.__its_subject; should eq app_dir}
   end
 
   describe "with an invalid configuration" do
