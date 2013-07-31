@@ -28,7 +28,10 @@ class Shoes
       end
 
       def open
+        p @shell.client_area.width
         @shell.pack
+        puts 'open'
+        p @shell.client_area.width
         @shell.open
         @dsl.top_slot.contents_alignment
         @started = true
@@ -118,6 +121,8 @@ class Shoes
       def initialize_real
         @real = ::Swt::Widgets::Composite.new(@shell, ::Swt::SWT::TRANSPARENT)
         @real.setSize(@dsl.width - @shell.getVerticalBar.getSize.x, @dsl.height)
+        puts 'init real'
+        puts @real.getSize.x
         @real.setLayout init_shoes_layout
       end
 
