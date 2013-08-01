@@ -17,6 +17,7 @@ class Shoes
         instance_variable_set "@#{v}", opts[v.to_sym]
       end
 
+      puts @width
       @left ||= 0
       @top ||= 0
       @width ||= 1.0
@@ -27,8 +28,10 @@ class Shoes
       set_margin
 
       @gui = Shoes.configuration.backend_for(self, @parent.gui)
-
+      p app.width
       eval_block blk
+      p app.width
+      puts '---------------------'
     end
 
     def current_slot

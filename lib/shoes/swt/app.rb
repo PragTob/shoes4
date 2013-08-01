@@ -17,25 +17,45 @@ class Shoes
         @background = Color.new(@dsl.opts[:background])
         initialize_shell
         initialize_real
+        puts @dsl.width
         ::Shoes::Swt.register self
 
-        attach_event_listeners
+        #attach_event_listeners
 
         vb = @shell.getVerticalBar
         vb.setIncrement 10
         vb.addSelectionListener SelectionListener.new(self, vb)
+        puts @dsl.width
+
         RedrawingAspect.redraws_for self
+        puts @dsl.width
+
       end
 
       def open
+        puts "DSL Width: #{@dsl.width}"
+        resize_until_right
         p @shell.client_area.width
         @shell.pack
-        puts 'open'
-        p @shell.client_area.width
+        resize_until_right
+        attach_event_listeners
         @shell.open
         @dsl.top_slot.contents_alignment
         @started = true
         ::Swt.event_loop { ::Shoes::Swt.main_app.disposed? } if main_app?
+      end
+
+      def resize_until_right
+        puts 'resize until'
+        puts "Width: #{width}"
+        puts "DSL Width: #{@dsl.width}"
+        while width != @dsl.width
+          puts "Width: #{width}"
+          puts "DSL Width: #{@dsl.width}"
+          difference = @dsl.width - width
+          @app.real.setSize width + difference, height
+          @app.real.layout
+        end
       end
 
       def quit
@@ -121,8 +141,6 @@ class Shoes
       def initialize_real
         @real = ::Swt::Widgets::Composite.new(@shell, ::Swt::SWT::TRANSPARENT)
         @real.setSize(@dsl.width - @shell.getVerticalBar.getSize.x, @dsl.height)
-        puts 'init real'
-        puts @real.getSize.x
         @real.setLayout init_shoes_layout
       end
 
@@ -160,6 +178,9 @@ class Shoes
         shell = event.widget
         width = shell.getClientArea().width
         height = shell.getClientArea().height
+        puts 'controlResized'
+        puts "Width: #{width}"
+        puts "height: #{height}"
         @app.dsl.top_slot.width   = width
         @app.dsl.top_slot.height  = height
         @app.real.setSize width, height

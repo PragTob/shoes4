@@ -34,8 +34,12 @@ class Shoes
     attr_accessor :mouse_button, :mouse_pos, :mhcs
 
     attr_accessor :resizable, :app_title
-    attr_writer   :width, :height
+    attr_writer   :height
 
+    def width=(w)
+      p caller
+      @width = w
+    end
     def initialize(opts={}, &blk)
       opts = DEFAULT_OPTIONS.merge(opts)
 
@@ -64,7 +68,10 @@ class Shoes
         execution_blk = nil
       end
 
+      puts "Gui width: #{@gui.width}"
+      puts 'Width before flow:' + width.to_s
       @top_slot = Flow.new self, self, { left: 0, top: 0, width: @width, height: @height}, &execution_blk
+      puts 'Width after flow' + width.to_s
 
       Shoes.register self
       @gui.open
