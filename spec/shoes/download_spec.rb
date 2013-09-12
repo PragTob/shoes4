@@ -1,6 +1,7 @@
 require 'shoes/spec_helper'
 
 describe Shoes::Download do
+  pending
   # makes it run offline
   let(:app) { Shoes::App.new }
   let(:block) { proc{} }
