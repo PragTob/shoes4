@@ -1,8 +1,6 @@
 require 'shoes/spec_helper'
 
 describe Shoes::Download do
-  pending
-  # makes it run offline
   let(:app) { Shoes::App.new }
   let(:block) { proc{} }
   let(:name) { "http://www.google.com/logos/nasa50th.gif" }
@@ -10,11 +8,12 @@ describe Shoes::Download do
   subject{ Shoes::Download.new app, name, args, &block }
 
   after do
-    subject.join_thread
-    File.delete args[:save]
+    #subject.join_thread
+    #File.delete args[:save]
   end
 
   it "should eventually finish" do
+    pending 'UGH VCR'
     extend AsyncHelper
     VCR.use_cassette 'download' do
       eventually(timeout: 10, interval: 1) {subject.should be_finished}
@@ -22,6 +21,7 @@ describe Shoes::Download do
   end
 
   it 'should eventually start' do
+    pending 'UGH VCR'
     extend AsyncHelper
     VCR.use_cassette 'download' do
       eventually(timeout: 10, interval: 1) {subject.should be_started}
@@ -29,6 +29,7 @@ describe Shoes::Download do
   end
 
   it 'creates the file specified by save' do
+    pending 'UGH VCR'
     extend AsyncHelper
     VCR.use_cassette 'download' do
       subject
@@ -42,6 +43,7 @@ describe Shoes::Download do
     let(:block) {proc {@called = true}}
 
     it 'calls the block with a result when the download is finished' do
+      pending 'UGH VCR'
       extend AsyncHelper
       VCR.use_cassette 'download' do
         subject
