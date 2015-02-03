@@ -1,9 +1,12 @@
-init:
+install:
+  - pwd
   - appveyor DownloadFile https://s3.amazonaws.com/jruby.org/downloads/1.7.19/jruby-bin-1.7.19.zip
   - 7z e jruby-bin-1.7.19.zip
   - SET PATH=c:\jruby-1.7.19\bin;%PATH%
 
-build_script:
+build: off
+
+before_test:
   - bundle
 
 shallow_clone: true
