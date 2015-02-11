@@ -6,8 +6,6 @@ install:
   - bundle
 
 build: off
-
 shallow_clone: true
-
 test_script:
   - rake spec:shoes
