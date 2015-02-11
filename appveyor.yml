@@ -1,6 +1,6 @@
 install:
   - appveyor DownloadFile https://s3.amazonaws.com/jruby.org/downloads/1.7.19/jruby-bin-1.7.19.zip
-  - 7z x jruby-bin-1.7.19.zip -y | FIND "Everything is ok"
+  - 7z x jruby-bin-1.7.19.zip -y > nul
   - SET PATH=C:\projects\shoes4\jruby-1.7.19\bin;%PATH%
   - gem install bundler
   - bundle
